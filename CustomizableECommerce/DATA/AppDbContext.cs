@@ -1,10 +1,17 @@
 ﻿using CustomizableECommerce.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using CustomizableECommerce.Models.ViewModels;
 
 namespace CustomizableECommerce.DATA
 {
-    public class AppDbContext: DbContext
+
+    public class AppDbContext: IdentityDbContext<ApplicationUser>
     {
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options)
+        {
+        }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
@@ -176,6 +183,7 @@ namespace CustomizableECommerce.DATA
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }
+        public DbSet<CustomizableECommerce.Models.ViewModels.RegisterVM> RegisterVM { get; set; } = default!;
 
 
     }

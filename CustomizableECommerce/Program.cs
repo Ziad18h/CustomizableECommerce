@@ -1,3 +1,9 @@
+using CustomizableECommerce.DATA;
+using CustomizableECommerce.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.Options;
+using Microsoft.EntityFrameworkCore;
+
 namespace CustomizableECommerce
 {
     public class Program
@@ -8,6 +14,20 @@ namespace CustomizableECommerce
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+            //service for registering the DbContext
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                //Options =>
+                                                                           //{
+                                                                           //    Options.User.RequireUniqueEmail = true;
+
+                //})
+
+                .AddEntityFrameworkStores<AppDbContext>(); 
 
             var app = builder.Build();
 
@@ -26,8 +46,11 @@ namespace CustomizableECommerce
 
             app.MapStaticAssets();
             app.MapControllerRoute(
+                name: "areas",
+                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+            app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
+                pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
             app.Run();
