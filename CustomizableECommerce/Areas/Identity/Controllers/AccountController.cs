@@ -3,6 +3,7 @@ using CustomizableECommerce.Models;
 using CustomizableECommerce.Models.ViewModels;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using NuGet.Protocol;
@@ -14,10 +15,11 @@ namespace CustomizableECommerce.Areas.Identity.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-
-        public AccountController(UserManager<ApplicationUser> userManager)
+        private readonly IEmailSender _emailSender;
+        public AccountController(UserManager<ApplicationUser> userManager ,IEmailSender emailSender)
         {
             _userManager = userManager;
+            _emailSender = emailSender;
         }
 
         public IActionResult Register()
@@ -51,7 +53,17 @@ namespace CustomizableECommerce.Areas.Identity.Controllers
 
             if (result.Succeeded)
             {
-                TempData["success-notification"] = "Registration successful! You can now log in.";
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(applicationuser);
+                var confirmationLink = Url.Action("ConfirmEmail", "Account", new {area ="Identity" , userId = applicationuser.Id, token = token },Request.Scheme);
+
+
+             
+                string html = System.IO.File.ReadAllText("EmailTemplates/ConfirmEmail.html");
+                html = html.Replace("{{link}}", confirmationLink);
+
+                await _emailSender.SendEmailAsync(registrVM.Email, "Confirm Your Account", html);
+
+                TempData["success-notification"] = "Registration successful! Confirm your email.";
                 return RedirectToAction(nameof(Index) , "Home" , new { area = "Customer"});
             }
             else
@@ -66,5 +78,26 @@ namespace CustomizableECommerce.Areas.Identity.Controllers
 
             }   
         }
+    
+
+    public async Task<IActionResult> ConfirmEmail(string userId , string token)
+        {
+            var user =await _userManager.FindByIdAsync(userId);
+
+            if (user is not null) 
+            {
+             var result =  await _userManager.ConfirmEmailAsync(user, token);
+
+                if (result.Succeeded)
+                    return View();
+
+                TempData["error-notification"] = String.Join(", ", result.Errors.Select(e => e.Description));
+                return RedirectToAction(nameof(Index), controllerName: "Home", new { area = "Customer" });
+            }
+            return NotFound();
+
+        }
+
     }
+
 }

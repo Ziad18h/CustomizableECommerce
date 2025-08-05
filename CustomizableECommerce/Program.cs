@@ -1,6 +1,8 @@
 using CustomizableECommerce.DATA;
 using CustomizableECommerce.Models;
+using CustomizableECommerce.Utility;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,14 +22,14 @@ namespace CustomizableECommerce
 
 
             //service for registering the DbContext
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                //Options =>
-                                                                           //{
-                                                                           //    Options.User.RequireUniqueEmail = true;
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<AppDbContext>();
 
-                //})
-
-                .AddEntityFrameworkStores<AppDbContext>(); 
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
+            //Options =>
+            //{
+            //    Options.User.RequireUniqueEmail = true;
+            //})
 
             var app = builder.Build();
 
