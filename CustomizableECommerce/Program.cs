@@ -22,13 +22,20 @@ namespace CustomizableECommerce
 
 
             //service for registering the DbContext
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddDefaultTokenProviders()
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
+                Options =>{
+
+                    Options.User.RequireUniqueEmail = true;
+                    Options.SignIn.RequireConfirmedAccount = true;
+                }
+
+                ).AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<AppDbContext>();
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             //Options =>
             //{
-            //    Options.User.RequireUniqueEmail = true;
+            //   
             //})
 
             var app = builder.Build();
