@@ -185,6 +185,10 @@ namespace CustomizableECommerce.DATA
         }
         public DbSet<CustomizableECommerce.Models.ViewModels.RegisterVM> RegisterVM { get; set; } = default!;
 
+public DbSet<CustomizableECommerce.Models.ViewModels.LoginVM> LoginVM { get; set; } = default!;
+
+public DbSet<CustomizableECommerce.Models.ViewModels.ResendEmailConfirmationVM> ResendEmailConfirmationVM { get; set; } = default!;
+
 
     }
 }

@@ -1,0 +1,61 @@
+﻿@model CustomizableECommerce.Models.ViewModels.LoginVM
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow rounded-4 border-0">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4 text-primary">Welcome Back</h2>
+                    <h5 class="text-center text-muted mb-4">Please login to your account</h5>
+                    <form asp-action="Login">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="EmailOrUserName" class="form-label"></label>
+                            <input asp-for="EmailOrUserName" class="form-control" type="text" />
+                            <span asp-validation-for="EmailOrUserName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label"></label>
+                            <input asp-for="Password" class="form-control" type="password" placeholder="Enter password" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" asp-for="RememberMe" />
+                            <label class="form-check-label" asp-for="RememberMe">
+                                @Html.DisplayNameFor(model => model.RememberMe)
+                            </label>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary rounded-pill">Login</button>
+                        </div>
+                    </form>
+
+                    <div class="mt-4 text-center">
+                        <a asp-action="ForgotPassword" class="text-decoration-none">Forgot Password?</a>
+                    </div>
+
+                    <div class="mt-2 text-center">
+                        <a asp-action="Register" class="text-decoration-none">Don't have an account? Register</a>
+                        
+                    </div>
+                    <a asp-action="ResendEmailConfirmation" class="text-decoration-none d-block text-center mt-2">
+                        Resend Email Confirmation</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
